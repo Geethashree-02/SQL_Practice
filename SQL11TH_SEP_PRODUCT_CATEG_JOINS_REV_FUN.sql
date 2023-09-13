@@ -1,0 +1,252 @@
+    CREATE VIEW JOINS
+	AS
+	SELECT A.FNAME+A.LNAME NAME_LIST,B.SP_NAME FROM  STD_LTABLE A INNER JOIN SP_TABLE B ON A.SPORT_ID=B.SP_ID INNER
+	JOIN LFINAL C ON C.STID = A.SPORT_ID;  --HERE JOINS HAS CREATED BUT I CAN'T SEE THE VIEW FOLDER IN DATABSE FOLDER SIDE
+
+	------ =================             ============== -------------------------------
+	 
+	 ----- CREATING PROC WITHOUT ARGS
+
+	ALTER PROC ADDITION_2NUMBERS
+	(@VALUE1 INT,
+	@VALUE2 INT
+	)
+	AS
+	BEGIN
+	     DECLARE @ANSR INT ;
+	     SET @ANSR=@VALUE1+@VALUE2;
+		 PRINT @ANSR;
+
+     END;
+	 GO
+
+	 --DECLARE @ANSR  INT;
+	 EXEC  ADDITION_2NUMBERS @VALUE1=17,@VALUE2=2;
+
+
+	 ---- JOINS   CATEGORY_LIST  ----
+
+	 CREATE TABLE CATEGORY_LIST
+	 (
+	 CATG_ID INT PRIMARY KEY,
+	 CATEGORY_NAME VARCHAR(25)
+	 );
+
+	 --DROP TABLE CATEGORY_LIST;
+
+	 INSERT INTO CATEGORY_LIST (CATG_ID,CATEGORY_NAME)
+	 VALUES
+	 (1,'Beauty products'),
+	 (2,'Herbal products'),
+	 (3,'Medical products');
+
+	 select * from CATEGORY_LIST;
+
+    ---- JOINS  BEAUTY_PRODUCTS  ----
+
+	CREATE TABLE PRODUCTS(
+	PRO_ID INT,
+	PRO_NAME VARCHAR(25),
+	PRO_PRICE DECIMAL (8,3),
+	CATEGORY_ID INT,
+	FOREIGN KEY (CATEGORY_ID) REFERENCES CATEGORY_LIST(CATG_ID)
+	);
+
+	--drop table BPRODUCTS;
+	--CREATE TABLE BEAUTY_PRODUCTS(
+	--PRO_ID INT,
+	--PRO_NAME VARCHAR(25),
+	--PRO_PRICE DECIMAL (8,3),
+	--CATEGORY_ID FOREIGN KEY REFERENCES CATEGORY_LIST(CATG_ID)
+	--);
+
+	INSERT INTO PRODUCTS (PRO_ID,PRO_NAME,PRO_PRICE,CATEGORY_ID)
+	VALUES
+	(01,'Moisturizing cream',150,1),
+	(02,'Lipstick',150,1),
+	(03,'Gold Mask',450,2),
+	(04,'Amla Hair oil',180,2),
+	(05,'Moisturizing cream',150,1),
+	(06,'Patanjali juice',950,3),
+	(07,'Neem Honey',840,2),
+	(08,'Hand Santizer',100,3),
+	(09,'Forest Honey',720,2),
+	(10,'Fir Knee Band',1150,3),
+	(11,'Fairness Face Wash',350,1),
+	(12,'Kasturi Manjal Jel',250,1);
+
+	SELECT * FROM PRODUCTS ORDER BY CATEGORY_ID ;
+
+	 SELECT * FROM CATEGORY_LIST;
+
+	 SELECT * FROM PRODUCTS;
+
+	SELECT * FROM PRODUCTS WHERE CATEGORY_LIST IN ( SELECT PRODUCTS.PRO_NAME,PRODUCTS.PRO_PRICE,CATEGORY_LIST.CATEGORY_NAME
+	FROM  PRODUCTS 
+	INNER JOIN CATEGORY_LIST 
+	ON PRODUCTS.CATEGORY_ID=CATEGORY_LIST.CATG_ID COUNT(*)>1);
+
+	-- Y IT IS COMING IN THIS WAY(?)
+
+	SELECT * FROM PRODUCTS INNER JOIN CATEGORY_LIST ON PRODUCTS.PRO_ID=CATEGORY_LIST.CATG_ID;
+
+	SELECT PRODUCTS.PRO_NAME,PRODUCTS.PRO_PRICE,CATEGORY_LIST.CATEGORY_NAME
+	FROM  PRODUCTS 
+	INNER JOIN CATEGORY_LIST 
+	ON PRODUCTS.CATEGORY_ID=CATEGORY_LIST.CATG_ID;
+
+	SELECT age FROM STUDENTS GROUP BY age HAVING COUNT(*)>1
+
+	----    ----
+
+--	CREATE TABLE [dbo].[STUDENTS](
+--	[ID] [int] NOT NULL,
+--	[NAME] [varchar](20) NOT NULL,
+--	[HOBBY] [varchar](20) NOT NULL,
+--	[AGE] [int] NOT NULL,
+--PRIMARY KEY CLUSTERED 
+--(
+--	[ID] ASC
+--)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+--) ON [PRIMARY]
+--GO
+
+
+
+
+
+
+--INSERT INTO [dbo].[STUDENTS]
+--           ([ID]
+--           ,[NAME]
+--           ,[HOBBY]
+--           ,[AGE])
+--     VALUES
+--           (<ID, int,>
+--           ,<NAME, varchar(20),>
+--           ,<HOBBY, varchar(20),>
+--           ,<AGE, int,>)
+--GO
+
+--SELECT * FROM STUDENTS where age = 26;
+
+--SELECT * FROM STUDENTS where age IN (select max(age) from STUDENTS )
+
+--SELECT * FROM STUDENTS where age IN (select min(age) from STUDENTS )
+--SELECT * FROM STUDENTS a inner join (select max(age) as age from STUDENTS) b on a.age= b.age;
+
+--select * from STUDENTS where age in (select age from STUDENTS group by age having count(*)>1)
+
+--select age from STUDENTS group by age having count(*)>1
+
+--SELECT * FROM STUDENTS;
+ 
+         CREATE VIEW V_STD_JOINS 
+         AS 
+         SELECT STD.ID,STD.FNAME + STD.LNAME NAME_LIST,
+	     SPRT.SPORT_NAME,SPRT.EVENT_DATE  
+	     FROM  STD_DETAIL AS STD 
+	     INNER JOIN  SPORT_DATA AS SPRT
+	     ON STD.ID=SPRT.ID;
+
+    --- DEMO ---
+
+	SELECT * FROM PRODUCTS INNER JOIN CATEGORY_LIST
+	ON PRODUCTS.PRO_ID=CATEGORY_LIST.CATG_ID;
+
+	
+	SELECT PRODUCTS.PRO_NAME,PRODUCTS.PRO_PRICE,CATEGORY_LIST.CATEGORY_NAME
+	FROM  PRODUCTS 
+	INNER JOIN CATEGORY_LIST 
+	ON PRODUCTS.CATEGORY_ID=CATEGORY_LIST.CATG_ID;
+
+	---- PRACTICE IN PRODUCTS AND CATEGORY TO GET BACK THE RESULT ---
+
+	SELECT age FROM STUDENTS GROUP BY age HAVING COUNT(*)>1
+
+	SELECT * FROM CATEGORY_LIST;
+
+	SELECT * FROM PRODUCTS;
+
+	SELECT * FROM PRODUCTS INNER JOIN CATEGORY_LIST ON PRODUCTS.PRO_ID=CATEGORY_LIST.CATG_ID;
+
+	---- REV FUNCTION ----
+
+	  DECLARE @i int,   
+            @Result varchar(max)  ,
+		    @inputstring varchar(max)  
+        SET @inputstring='ABCD'
+        SET @Result=''  
+        SET @i = 1  
+      WHILE @i <= LEN(@inputstring)  
+        BEGIN  
+          SET @Result = SUBSTRING(@inputstring,@i,1) + @Result  
+          SET @i=@i + 1  
+	      print @Result
+      END  
+       print @Result
+
+       ---- REV FUNCTION ----
+
+      CREATE (@parameter_name parameter_data_type,...)
+      RETURNS <data_type>
+ 
+      AS 
+          BEGIN
+
+            <function_body>
+        
+            RETURN <value or select_statement>
+        END
+
+		----------- OUTPUT FOR PRODUCTS AND CATEGORY LIST ---------
+
+     SELECT * FROM CATEGORY_LIST;
+
+	 SELECT * FROM PRODUCTS;
+
+	 SELECT * FROM PRODUCTS INNER JOIN CATEGORY_LIST ON PRODUCTS.PRO_ID=CATEGORY_LIST.CATG_ID;
+
+	 SELECT PRODUCTS.PRO_NAME,PRODUCTS.PRO_PRICE,CATEGORY_LIST.CATEGORY_NAME
+	 FROM  PRODUCTS 
+	 INNER JOIN CATEGORY_LIST 
+	 ON PRODUCTS.CATEGORY_ID=CATEGORY_LIST.CATG_ID;
+
+	 SELECT SUBSTRING('GEETHA',3,3);
+
+CREATE function StringReverse(@inputstring varchar(max))  
+returns varchar(max)   
+AS  
+BEGIN  
+  DECLARE @i int,   
+          @Result varchar(max)  
+  SET @Result=''  
+  SET @i = 1  
+  WHILE @i <= LEN(@inputstring)  
+  BEGIN  
+    SET @Result = SUBSTRING(@inputstring,@i,1) + @Result  
+    SET @i=@i + 1  
+  END  
+  RETURN @Result 
+END
+
+DECLARE @Result VARCHAR(MAX);
+EXEC StringReverse @inputstring ='abcd';
+PRINT @Result ; 
+
+
+    SELECT * FROM CATEGORY_LIST;
+
+	SELECT * FROM PRODUCTS;
+
+	SELECT * FROM PRODUCTS INNER JOIN CATEGORY_LIST ON PRODUCTS.PRO_ID=CATEGORY_LIST.CATG_ID
+
+	SELECT P.PRO_NAME,P.PRO_PRICE,C.CATEGORY_NAME
+	FROM  PRODUCTS P
+	INNER JOIN CATEGORY_LIST C
+	ON P.CATEGORY_ID=C.CATG_ID WHERE C.CATG_ID=2
+
+    SELECT PRODUCTS.PRO_NAME,PRODUCTS.PRO_PRICE,CATEGORY_LIST.CATEGORY_NAME
+	FROM  PRODUCTS 
+	INNER JOIN CATEGORY_LIST 
+	ON PRODUCTS.CATEGORY_ID=CATEGORY_LIST.CATG_ID;
